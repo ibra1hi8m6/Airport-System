@@ -13,14 +13,16 @@
         public Gate Gate { get; set; }
 
         public Guid PassengerId { get; set; }
-        public Passenger Passenger { get; set; }
-        public Guid TicketCounterId { get; set; }
-        public TicketCounter TicketCounter { get; set; }
+        public PassengerUser Passenger { get; set; }
 
-        
+        public Guid TicketCashierId { get; set; }
+        public TicketCashierUser TicketCashier { get; set; }
+
 
         public Guid FlightId { get; set; }
         public Flight Flight { get; set; }
+
+        public bool CanUpdate { get; set; } = true;
 
     }
     public enum TicketClass

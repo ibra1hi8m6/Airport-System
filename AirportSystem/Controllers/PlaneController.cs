@@ -2,6 +2,7 @@
 using AirportSystem.Forms;
 using AirportSystem.Services;
 using AirportSystem.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,24 @@ namespace AirportSystem.Controllers
         {
             _planeService = planeService;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Plane>> CreatePlane([FromBody] PlaneServiceFormModel planeForm)
         {
-            var plane = await _planeService.CreatePlaneAsync(planeForm);
-            return CreatedAtAction(nameof(GetPlaneById), new { id = plane.Id }, plane);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var (plane, message) = await _planeService.CreatePlaneAsync(planeForm);
+                return Ok(new { plane, message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
@@ -44,16 +57,41 @@ namespace AirportSystem.Controllers
             var planes = await _planeService.GetAllPlanesAsync();
             return Ok(planes);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<Plane>> UpdatePlane(Guid id, [FromBody] PlaneServiceFormModel planeForm)
         {
-            var plane = await _planeService.UpdatePlaneAsync(id, planeForm);
-            if (plane == null)
+            try
             {
-                return NotFound();
+                var plane = await _planeService.UpdatePlaneAsync(id, planeForm);
+                if (plane == null)
+                {
+                    return NotFound();
+                }
+                return Ok(plane);
             }
-            return Ok(plane);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("update-even-payload/{id}")]
+        public async Task<ActionResult<Plane>> UpdatePlaneWithEvenPayload(Guid id, [FromBody] PlaneServiceFormModel planeForm)
+        {
+            try
+            {
+                var plane = await _planeService.UpdatePlaneWithEvenPayloadAsync(id, planeForm);
+                if (plane == null)
+                {
+                    return NotFound();
+                }
+                return Ok(plane);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete("{id}")]

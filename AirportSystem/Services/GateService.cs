@@ -19,6 +19,11 @@ namespace AirportSystem.Services
 
         public async Task<Gate> CreateGateAsync(GateServiceFormModel gateForm)
         {
+            var existingGate = await _context.Gates.FirstOrDefaultAsync(g => g.Name == gateForm.Name);
+            if (existingGate != null)
+            {
+                throw new Exception("A gate with the same name already exists.");
+            }
             var gate = new Gate
             {
                 Id = Guid.NewGuid(),
@@ -34,7 +39,18 @@ namespace AirportSystem.Services
         {
             return await _context.Gates.FindAsync(id);
         }
+        public async Task<(IEnumerable<Gate> gates, int totalPages)> GetGatesWithPaginationAsync(int page, int pageSize)
+        {
+            var totalGates = await _context.Gates.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalGates / (double)pageSize);
 
+            var gates = await _context.Gates
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (gates, totalPages);
+        }
         public async Task<IEnumerable<Gate>> GetAllGatesAsync()
         {
             return await _context.Gates.ToListAsync();

@@ -142,3 +142,4 @@ D:\C#_Coures\AirportSystem\AirportSystem\obj\Debug\net8.0\refint\AirportSystem.d
 D:\C#_Coures\AirportSystem\AirportSystem\obj\Debug\net8.0\AirportSystem.pdb
 D:\C#_Coures\AirportSystem\AirportSystem\obj\Debug\net8.0\AirportSystem.genruntimeconfig.cache
 D:\C#_Coures\AirportSystem\AirportSystem\obj\Debug\net8.0\ref\AirportSystem.dll
+D:\C#_Coures\AirportSystem\AirportSystem\obj\Debug\net8.0\AirportSystem.sourcelink.json

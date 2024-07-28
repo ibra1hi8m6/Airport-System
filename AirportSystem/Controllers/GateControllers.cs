@@ -1,6 +1,7 @@
 ﻿using AirportSystem.Entity;
 using AirportSystem.Forms;
 using AirportSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,12 +19,20 @@ namespace AirportSystem.Controllers
         {
             _gateService = gateService;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Gate>> CreateGate([FromBody] GateServiceFormModel gateForm)
         {
-            var gate = await _gateService.CreateGateAsync(gateForm);
-            return CreatedAtAction(nameof(GetGateById), new { id = gate.Id }, gate);
+
+            try
+            {
+                var gate = await _gateService.CreateGateAsync(gateForm);
+                return CreatedAtAction(nameof(GetGateById), new { id = gate.Id }, gate);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpGet("{id}")]
@@ -43,7 +52,17 @@ namespace AirportSystem.Controllers
             var gates = await _gateService.GetAllGatesAsync();
             return Ok(gates);
         }
-
+        [HttpGet("page/{page}")]
+        public async Task<ActionResult<IEnumerable<Gate>>> GetGatesWithPagination(int page, int pageSize = 5)
+        {
+            var (gates, totalPages) = await _gateService.GetGatesWithPaginationAsync(page, pageSize);
+            if (page > totalPages || page < 1)
+            {
+                return BadRequest("Invalid page number.");
+            }
+            return Ok(new { gates, totalPages });
+        }
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<Gate>> UpdateGate(Guid id, [FromBody] GateServiceFormModel gateForm)
         {

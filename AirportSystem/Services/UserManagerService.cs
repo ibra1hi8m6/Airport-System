@@ -1,4 +1,5 @@
 ﻿using AirportSystem.Entity;
+using AirportSystem.Forms;
 using AirportSystem.Services.IServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,49 +14,130 @@ namespace AirportSystem.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+        private readonly IAddressService _addressService;
 
-
-        public UserManagerService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+        public UserManagerService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<Guid>> roleManager, IAddressService addressService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _addressService = addressService;
         }
-
-        public async Task<ApplicationUser> CreateUserAsync(string username, string email, string password)
+        public async Task<DoctorUser> CreateDoctorUserAsync(DoctorSignUpFormModel model)
         {
-            var Role = "Passenger";
-            var newUser = new ApplicationUser { UserName = username, Email = email };
-            var result = await _userManager.CreateAsync(newUser, password);
+            var newUser = new DoctorUser
+            {
+                UserName = model.Username,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                DateOfBirth = model.DateOfBirth,
+                DoctorCode = model.DoctorCode
+            };
+
+            var result = await _userManager.CreateAsync(newUser, model.Password);
 
             if (!result.Succeeded)
             {
                 throw new Exception($"Failed to create user: {string.Join(", ", result.Errors)}");
             }
 
-            await AssignRoleAsync(newUser, Role);
+            await AssignRoleAsync(newUser, "Doctor");
             return newUser;
         }
-        public async Task<ApplicationUser> CreateAuthorUserAsync(string username, string email, string password)
+
+        public async Task<PassengerUser> CreatePassengerAsync(PassengerSignUpFormModel model)
         {
-            var Role = "Pilot";
-            var newUser = new ApplicationUser { UserName = username, Email = email };
-            var result = await _userManager.CreateAsync(newUser, password);
+            var newUser = new PassengerUser
+            {
+                UserName = model.Username,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                DateOfBirth = model.DateOfBirth,
+                PhoneNumber = model.PhoneNumber
+            };
+
+            // Create and save the address
+            var addressForm = new AddressServiceFormModel
+            {
+                HouseNumber = model.HouseNumber,
+                Street = model.Street,
+                City = model.City,
+                Country = model.Country
+            };
+            var address = await _addressService.CreateAddressAsync(addressForm);
+            newUser.AddressId = address.Id;
+            newUser.Address = address;
+
+            var result = await _userManager.CreateAsync(newUser, model.Password);
 
             if (!result.Succeeded)
             {
                 throw new Exception($"Failed to create user: {string.Join(", ", result.Errors)}");
             }
 
-            await AssignRoleAsync(newUser, Role);
+            await AssignRoleAsync(newUser, "Passenger");
+            return newUser;
+        }
+        public async Task<TicketCashierUser> CreateTicketCashierAsync(TicketCashierSignUpFormModel model)
+        {
+            var newUser = new TicketCashierUser
+            {
+                UserName = model.Username,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                DateOfBirth = model.DateOfBirth,
+                
+            };
+
+            var result = await _userManager.CreateAsync(newUser, model.Password);
+
+            if (!result.Succeeded)
+            {
+                throw new Exception($"Failed to create user: {string.Join(", ", result.Errors)}");
+            }
+
+            await AssignRoleAsync(newUser, "TicketCashier");
+            return newUser;
+        }
+        public async Task<PilotUser> CreatePilotUserAsync(PilotSignUpFormModel model)
+        {
+            var newUser = new PilotUser
+            {
+                UserName = model.Username,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                TotalHours = model.TotalHours,
+                PhoneNumber = model.PhoneNumber,
+                
+                DateOfBirth = model.DateOfBirth
+            };
+
+            var result = await _userManager.CreateAsync(newUser, model.Password);
+
+            if (!result.Succeeded)
+            {
+                throw new Exception($"Failed to create user: {string.Join(", ", result.Errors)}");
+            }
+
+            await AssignRoleAsync(newUser, "Pilot");
             return newUser;
         }
 
-        public async Task<ApplicationUser> CreateAdminUserAsync(string username, string email, string password)
+        public async Task<ApplicationUser> CreateAdminUserAsync(AdminSignUpFormModel model)
         {
             var Role = "Admin";
-            var newUser = new ApplicationUser { UserName = username, Email = email };
-            var result = await _userManager.CreateAsync(newUser, password);
-
+            var newUser = new ApplicationUser
+            {
+                UserName = model.Username,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                DateOfBirth = model.DateOfBirth
+            };
+            var result = await _userManager.CreateAsync(newUser, model.Password);
             if (!result.Succeeded)
             {
                 throw new Exception($"Failed to create user: {string.Join(", ", result.Errors)}");

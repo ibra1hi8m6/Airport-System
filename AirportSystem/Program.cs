@@ -33,7 +33,8 @@ builder.Services.AddScoped<IPlaneService, PlaneService>();
 builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
-
+builder.Services.AddScoped<IFlightService, FlightService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 // JWT configuration
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
 builder.Services.AddAuthentication(options =>
@@ -45,7 +46,7 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])),
+        IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = false,
         ValidateAudience = false,
         ValidateLifetime = true,
@@ -58,7 +59,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BlogAPI", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "AirportSystem", Version = "v1" });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -86,7 +87,12 @@ builder.Services.AddSwaggerGen(options =>
     });
 
 });
-
+// Add services to the container.
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.MaxDepth = 64; // Optional: Increase max depth if needed
+});
 
 
 

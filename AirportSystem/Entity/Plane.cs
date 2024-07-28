@@ -8,6 +8,8 @@
 
         public int Plane_Payload { get; set; }
 
-        public int number_of_seats { get; set; }
+        public int seats_Economy { get; set; }
+
+        public int seats_Business { get; set; }
     }
 }

@@ -42,28 +42,36 @@ namespace AirportSystem.Controllers
             return Unauthorized("Invalid login attempt");
         }
 
-        [HttpPost("signup")]
-        public async Task<IActionResult> SignUp([FromBody] SignUpFormModel signUpModel)
+
+        [HttpPost("create-admin")]
+        public async Task<IActionResult> CreateAdmin([FromBody] AdminSignUpFormModel adminSignUpModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            ApplicationUser user = null;
 
-            switch (signUpModel.Role)
+            try
             {
-                case UserRole.Admin:
-                    user = await _userManagerService.CreateAdminUserAsync(signUpModel.Username, signUpModel.Email, signUpModel.Password);
-                    break;
-                case UserRole.Pilot:
-                    user = await _userManagerService.CreateAuthorUserAsync(signUpModel.Username, signUpModel.Email, signUpModel.Password);
-                    break;
-                case UserRole.Passenger:
-                default:
-                    user = await _userManagerService.CreateUserAsync(signUpModel.Username, signUpModel.Email, signUpModel.Password);
-                    break;
+                var adminUser = await _userManagerService.CreateAdminUserAsync(adminSignUpModel);
+                return Ok(new { Message = "Admin created successfully", AdminUser = adminUser });
             }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = $"Failed to create admin: {ex.Message}" });
+            }
+        }
+
+
+        [HttpPost("signup/passenger")]
+        public async Task<IActionResult> SignUpPassenger([FromBody] PassengerSignUpFormModel signUpModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManagerService.CreatePassengerAsync(signUpModel);
 
             if (user != null)
             {
@@ -73,6 +81,59 @@ namespace AirportSystem.Controllers
             return BadRequest("Sign up failed");
         }
 
+        [HttpPost("signup/pilot")]
+        public async Task<IActionResult> SignUpPilot([FromBody] PilotSignUpFormModel signUpModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManagerService.CreatePilotUserAsync(signUpModel);
+
+            if (user != null)
+            {
+                return Ok("Sign up successful");
+            }
+
+            return BadRequest("Sign up failed");
+        }
+
+        [HttpPost("signup/ticketcashier")]
+        public async Task<IActionResult> SignUpTicketCashier([FromBody] TicketCashierSignUpFormModel signUpModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManagerService.CreateTicketCashierAsync(signUpModel);
+
+            if (user != null)
+            {
+                return Ok("Sign up successful");
+            }
+
+            return BadRequest("Sign up failed");
+        }
+
+        [HttpPost("signup/doctor")]
+        public async Task<IActionResult> SignUpDoctor([FromBody] DoctorSignUpFormModel signUpModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManagerService.CreateDoctorUserAsync(signUpModel);
+
+            if (user != null)
+            {
+                return Ok("Sign up successful");
+            }
+
+            return BadRequest("Sign up failed");
+        }
 
         // New API to get all users
         [HttpGet("all")]
