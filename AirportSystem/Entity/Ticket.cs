@@ -23,7 +23,7 @@
         public Flight Flight { get; set; }
 
         public bool CanUpdate { get; set; } = true;
-
+        public bool CanRegisterExtraPayload { get; set; } = false;
     }
     public enum TicketClass
     {

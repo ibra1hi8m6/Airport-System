@@ -1,16 +1,19 @@
 ﻿using AirportSystem.Entity;
+using AirportSystem.Exceptions;
 using AirportSystem.Forms;
 using AirportSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AirportSystem.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/Gates")]
     public class GateController : ControllerBase
     {
         private readonly IGateService _gateService;
@@ -20,22 +23,26 @@ namespace AirportSystem.Controllers
             _gateService = gateService;
         }
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("CreateGate")]
         public async Task<ActionResult<Gate>> CreateGate([FromBody] GateServiceFormModel gateForm)
         {
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
 
             try
             {
-                var gate = await _gateService.CreateGateAsync(gateForm);
+                var gate = await _gateService.CreateGateAsync(gateForm, userRole);
                 return CreatedAtAction(nameof(GetGateById), new { id = gate.Id }, gate);
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            catch (AirportSystemException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetGateById/{id}")]
         public async Task<ActionResult<Gate>> GetGateById(Guid id)
         {
             var gate = await _gateService.GetGateByIdAsync(id);
@@ -46,7 +53,7 @@ namespace AirportSystem.Controllers
             return Ok(gate);
         }
 
-        [HttpGet]
+        [HttpGet("GetAllGates")]
         public async Task<ActionResult<IEnumerable<Gate>>> GetAllGates()
         {
             var gates = await _gateService.GetAllGatesAsync();
@@ -63,21 +70,33 @@ namespace AirportSystem.Controllers
             return Ok(new { gates, totalPages });
         }
         [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
+        [HttpPut("UpdateGate/{id}")]
         public async Task<ActionResult<Gate>> UpdateGate(Guid id, [FromBody] GateServiceFormModel gateForm)
         {
-            var gate = await _gateService.UpdateGateAsync(id, gateForm);
-            if (gate == null)
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+            try
             {
-                return NotFound();
+                var gate = await _gateService.UpdateGateAsync(id, gateForm, userRole);
+                if (gate == null)
+                {
+                    return NotFound();
+                }
+                return Ok(gate);
             }
-            return Ok(gate);
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-
-        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("DeleteGate/{id}")]
         public async Task<ActionResult> DeleteGate(Guid id)
         {
-            var result = await _gateService.DeleteGateAsync(id);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+            var result = await _gateService.DeleteGateAsync(id, userRole);
             if (!result)
             {
                 return NotFound();

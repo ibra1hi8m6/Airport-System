@@ -9,7 +9,7 @@ namespace AirportSystem.Services.IServices
     public interface IFlightService
     {
         Task<IEnumerable<Flight>> GetFlightsWithDoctorsAsync();
-        Task<IEnumerable<Flight>> GetFlightsWithPassengersAgeGreaterThanAsync(int age);
+        
         Task<IEnumerable<Flight>> GetFlightsByDurationAsync(TimeSpan duration, bool greaterThan);
         Task<IEnumerable<Ticket>> GetTicketsByFlightIdAsync(Guid flightId);
         Task<Flight> CreateFlightAsync(FlightServiceFormModel flightModel);
@@ -17,5 +17,9 @@ namespace AirportSystem.Services.IServices
         Task<IEnumerable<Flight>> GetAllFlightsAsync();
         Task UpdateFlightAsync(Guid id, FlightServiceFormModel flightModel);
         Task DeleteFlightAsync(Guid id);
+
+        Task<IEnumerable<Flight>> GetFlightsByPilotIdAsync(Guid pilotId);
+        Task<IEnumerable<Flight>> GetFlightsByLocationAsync(string location, bool isDeparture);
+       
     }
 }

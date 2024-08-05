@@ -11,6 +11,7 @@ namespace AirportSystem.Forms
         public Guid PassengerId { get; set; }
         public Guid TicketCashierId { get; set; }
         public Guid FlightId { get; set; }
+        public bool CanRegisterExtraPayload { get; set; }
     }
 
     public class TicketUpdateFormModel
@@ -20,6 +21,7 @@ namespace AirportSystem.Forms
         public string SeatNumber { get; set; }
         public Guid GateId { get; set; }
         public Guid FlightId { get; set; }
+        public bool CanRegisterExtraPayload { get; set; }
     }
     public class TicketResponseModel
     {
@@ -34,5 +36,6 @@ namespace AirportSystem.Forms
         public Guid FlightId { get; set; }
         public string FlightDetails { get; set; }
         public Guid PlaneId { get; set; }
+        public bool CanRegisterExtraPayload { get; set; }
     }
 }

@@ -9,5 +9,6 @@ namespace AirportSystem.Services.IServices
         Task<Address> GetAddressByIdAsync(Guid id);
         Task UpdateAddressAsync(Guid id, AddressServiceFormModel addressForm);
         Task DeleteAddressAsync(Guid id);
+        Task<IEnumerable<Address>> GetAllAddressesAsync();
     }
 }

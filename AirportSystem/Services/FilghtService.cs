@@ -21,6 +21,10 @@ namespace AirportSystem.Services
         }
         public async Task<IEnumerable<Ticket>> GetTicketsByFlightIdAsync(Guid flightId)
         {
+            if (flightId == Guid.Empty)
+            {
+                throw new ArgumentException("Flight ID cannot be empty.", nameof(flightId));
+            }
             return await _context.Tickets.Where(t => t.FlightId == flightId).ToListAsync();
         }
         public async Task<Flight> CreateFlightAsync(FlightServiceFormModel flightModel)
@@ -57,7 +61,18 @@ namespace AirportSystem.Services
         }
         public async Task<Flight> GetFlightByIdAsync(Guid id)
         {
-            return await _context.Flights.FindAsync(id);
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentException("Flight ID cannot be empty.", nameof(id));
+            }
+            var flight = await _context.Flights.FindAsync(id);
+
+            if (flight == null)
+            {
+                throw new AirportSystemException("Flight not found");
+            }
+
+            return flight;
         }
 
         public async Task<IEnumerable<Flight>> GetAllFlightsAsync()
@@ -92,13 +107,7 @@ namespace AirportSystem.Services
             return await _context.Flights.Where(f => f.DoctorId.HasValue).ToListAsync();
         }
 
-        public async Task<IEnumerable<Flight>> GetFlightsWithPassengersAgeGreaterThanAsync(int age)
-        {
-            return await _context.Flights
-                .Where(f => _context.Tickets
-                    .Any(t => t.FlightId == f.Id && _context.Users.OfType<PassengerUser>().Any(p => p.Id == t.PassengerId && p.GetAge() >= age)))
-                .ToListAsync();
-        }
+       
         public async Task<IEnumerable<Flight>> GetFlightsByDurationAsync(TimeSpan duration, bool greaterThan)
         {
             return await _context.Flights
@@ -201,6 +210,33 @@ namespace AirportSystem.Services
             {
                 throw new AirportSystemException("Pilot younger than 35 years cannot register for flights longer than 5 hours.");
             }
+
+
         }
+
+
+        public async Task<IEnumerable<Flight>> GetFlightsByPilotIdAsync(Guid pilotId)
+        {
+            var flights = await _context.PilotFlights
+                .Where(pf => pf.PilotUserId == pilotId)
+                .Select(pf => pf.Flight)
+                .ToListAsync();
+
+            return flights;
+        }
+
+        public async Task<IEnumerable<Flight>> GetFlightsByLocationAsync(string location, bool isDeparture)
+        {
+            if (isDeparture)
+            {
+                return await _context.Flights.Where(f => f.Takeoff_Location == location).ToListAsync();
+            }
+            else
+            {
+                return await _context.Flights.Where(f => f.Destination == location).ToListAsync();
+            }
+        }
+
+      
     }
 }

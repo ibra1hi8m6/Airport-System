@@ -9,6 +9,8 @@ using System.Security.Claims;
 using System.Text;
 using AirportSystem.Services;
 using AirportSystem.Services.IServices;
+using AirportSystem.Forms.Validate;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +37,9 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IFlightService, FlightService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<IValidateForm, ValidateForm>();
+
+builder.Services.AddScoped<DatabaseSeeder>();
 // JWT configuration
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
 builder.Services.AddAuthentication(options =>
@@ -55,7 +60,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -87,17 +91,19 @@ builder.Services.AddSwaggerGen(options =>
     });
 
 });
-// Add services to the container.
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-    options.JsonSerializerOptions.MaxDepth = 64; // Optional: Increase max depth if needed
-});
 
+// Configure IpRateLimiting
+builder.Services.AddOptions();
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitingPolicies"));
+builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -113,4 +119,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Seed the admin user
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+    await seeder.SeedAdminUserAsync();
+}
+
 app.Run();
+
+

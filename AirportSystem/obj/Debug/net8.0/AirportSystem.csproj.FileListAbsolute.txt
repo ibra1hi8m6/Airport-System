@@ -62,7 +62,6 @@ D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\System.Memory.Data.dll
 D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\System.Runtime.Caching.dll
 D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
 D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\System.Security.Permissions.dll
-D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\System.Text.Json.dll
 D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\System.Windows.Extensions.dll
 D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
 D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
@@ -143,3 +142,5 @@ D:\C#_Coures\AirportSystem\AirportSystem\obj\Debug\net8.0\AirportSystem.pdb
 D:\C#_Coures\AirportSystem\AirportSystem\obj\Debug\net8.0\AirportSystem.genruntimeconfig.cache
 D:\C#_Coures\AirportSystem\AirportSystem\obj\Debug\net8.0\ref\AirportSystem.dll
 D:\C#_Coures\AirportSystem\AirportSystem\obj\Debug\net8.0\AirportSystem.sourcelink.json
+D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\C#_Coures\AirportSystem\AirportSystem\bin\Debug\net8.0\AspNetCoreRateLimit.dll

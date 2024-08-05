@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; } 
 
-        public int House_Number { get; set; }
+        public int? House_Number { get; set; }
 
         public string street { get; set; }
 

@@ -1,9 +1,11 @@
-﻿using AirportSystem.Entity;
+﻿using AirportSystem.Data;
+using AirportSystem.Entity;
 using AirportSystem.Exceptions;
 using AirportSystem.Forms;
 using AirportSystem.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,13 +17,15 @@ namespace AirportSystem.Controllers
     public class FlightController : ControllerBase
     {
         private readonly IFlightService _flightService;
+        private readonly ApplicationDbContext _context;
 
-        public FlightController(IFlightService flightService)
+        public FlightController(IFlightService flightService, ApplicationDbContext context)
         {
             _flightService = flightService;
+            _context = context;
         }
-        [Authorize(Roles = "Admin")]
-        [HttpPost("create")]
+        //[Authorize(Roles = "Admin")]
+        [HttpPost("CreateFlight")]
         public async Task<IActionResult> CreateFlight([FromBody] FlightServiceFormModel flightModel)
         {
             if (!ModelState.IsValid)
@@ -32,7 +36,21 @@ namespace AirportSystem.Controllers
             try
             {
                 var flight = await _flightService.CreateFlightAsync(flightModel);
-                return Ok(flight);
+                var plane = await _context.Planes.FirstOrDefaultAsync(p => p.Id == flight.PlaneId);
+
+                var flightResponse = new FlightResponseModel
+                {
+                    FlightId = flight.Id,
+                    DepartureTime = flight.DepartureTime,
+                    ArrivalTime = flight.ArrivalTime,
+                    TakeoffLocation = flight.Takeoff_Location,
+                    Destination = flight.Destination,
+                    PlaneId = flight.PlaneId,
+                    PlaneModel = plane?.Plane_model,
+                    PlanePayload = plane?.Plane_Payload ?? 0
+                };
+
+                return Ok(flightResponse);
             }
             catch (AirportSystemException ex)
             {
@@ -45,7 +63,7 @@ namespace AirportSystem.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetFlightById/{id}")]
         public async Task<IActionResult> GetFlightById(Guid id)
         {
             var flight = await _flightService.GetFlightByIdAsync(id);
@@ -64,21 +82,16 @@ namespace AirportSystem.Controllers
             return Ok(flights);
         }
 
-        [HttpGet("with-doctors")]
+        [HttpGet("GetFlightsWithDoctors")]
         public async Task<IActionResult> GetFlightsWithDoctors()
         {
             var flights = await _flightService.GetFlightsWithDoctorsAsync();
             return Ok(flights);
         }
 
-        [HttpGet("passenger-age-greater-than/{age}")]
-        public async Task<IActionResult> GetFlightsWithPassengersAgeGreaterThan(int age)
-        {
-            var flights = await _flightService.GetFlightsWithPassengersAgeGreaterThanAsync(age);
-            return Ok(flights);
-        }
+       
 
-        [HttpGet("duration-greater-than/{hours}")]
+        [HttpGet("GetFlightsWithDurationGreaterThan/{hours}")]
         public async Task<IActionResult> GetFlightsWithDurationGreaterThan(int hours)
         {
             var duration = TimeSpan.FromHours(hours);
@@ -86,15 +99,15 @@ namespace AirportSystem.Controllers
             return Ok(flights);
         }
 
-        [HttpGet("duration-less-than/{hours}")]
+        [HttpGet("GetFlightsWithDurationLessThan/{hours}")]
         public async Task<IActionResult> GetFlightsWithDurationLessThan(int hours)
         {
             var duration = TimeSpan.FromHours(hours);
             var flights = await _flightService.GetFlightsByDurationAsync(duration, false);
             return Ok(flights);
         }
-        [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
+        //[Authorize(Roles = "Admin")]
+        [HttpPut("UpdateFlight/{id}")]
         public async Task<IActionResult> UpdateFlight(Guid id, [FromBody] FlightServiceFormModel flightModel)
         {
             if (!ModelState.IsValid)
@@ -113,7 +126,7 @@ namespace AirportSystem.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteFlight/{id}")]
         public async Task<IActionResult> DeleteFlight(Guid id)
         {
             try
@@ -126,5 +139,22 @@ namespace AirportSystem.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        [HttpGet(" GetFlightsByPilotId/{pilotId}")]
+        public async Task<IActionResult> GetFlightsByPilotId(Guid pilotId)
+        {
+            var flights = await _flightService.GetFlightsByPilotIdAsync(pilotId);
+            return Ok(flights);
+        }
+
+        [HttpGet("GetFlightsByLocation")]
+        public async Task<IActionResult> GetFlightsByLocation(string location, bool isDeparture)
+        {
+            var flights = await _flightService.GetFlightsByLocationAsync(location, isDeparture);
+            return Ok(flights);
+        }
+
+     
     }
 }

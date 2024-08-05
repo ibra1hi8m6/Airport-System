@@ -9,11 +9,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using AirportSystem.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AirportSystem.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/UserManagement")]
     public class UserManagerController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,147 +31,126 @@ namespace AirportSystem.Controllers
             _tokenService = tokenService;
         }
 
-        [HttpPost("login")]
+        [HttpPost("LoginUser")]
         public async Task<IActionResult> Login([FromBody] LoginFormModel loginModel)
         {
-            var result = await _signInManager.PasswordSignInAsync(loginModel.Username, loginModel.Password, loginModel.RememberMe, lockoutOnFailure: false);
-            if (result.Succeeded)
+            var userResponse = await _userManagerService.LoginAsync(loginModel);
+
+            if (userResponse == null)
             {
-                var user = await _userManagerService.FindByNameAsync(loginModel.Username);
-                var token = _tokenService.GenerateToken(user);
-                return Ok(new { Token = token });
+                return Unauthorized("Invalid login attempt");
             }
-            return Unauthorized("Invalid login attempt");
+
+            return Ok(userResponse);
         }
 
-
-        [HttpPost("create-admin")]
-        public async Task<IActionResult> CreateAdmin([FromBody] AdminSignUpFormModel adminSignUpModel)
+        [HttpPost("SignUpNewUser")]
+        public async Task<IActionResult> SignUp([FromBody] SignUpFormModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             try
             {
-                var adminUser = await _userManagerService.CreateAdminUserAsync(adminSignUpModel);
-                return Ok(new { Message = "Admin created successfully", AdminUser = adminUser });
+                var userResponse = await _userManagerService.CreateUserAsync(model);
+                return Ok(userResponse);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Message = $"Failed to create admin: {ex.Message}" });
+                return BadRequest(new { message = ex.Message });
             }
         }
-
-
-        [HttpPost("signup/passenger")]
-        public async Task<IActionResult> SignUpPassenger([FromBody] PassengerSignUpFormModel signUpModel)
+        [HttpGet("GetAllRoles")]
+        public IActionResult GetRoles()
         {
-            if (!ModelState.IsValid)
+            var roles = Enum.GetValues(typeof(UserRole));
+            var roleList = new List<object>();
+
+            foreach (var role in roles)
             {
-                return BadRequest(ModelState);
-            }
-
-            var user = await _userManagerService.CreatePassengerAsync(signUpModel);
-
-            if (user != null)
-            {
-                return Ok("Sign up successful");
-            }
-
-            return BadRequest("Sign up failed");
-        }
-
-        [HttpPost("signup/pilot")]
-        public async Task<IActionResult> SignUpPilot([FromBody] PilotSignUpFormModel signUpModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = await _userManagerService.CreatePilotUserAsync(signUpModel);
-
-            if (user != null)
-            {
-                return Ok("Sign up successful");
-            }
-
-            return BadRequest("Sign up failed");
-        }
-
-        [HttpPost("signup/ticketcashier")]
-        public async Task<IActionResult> SignUpTicketCashier([FromBody] TicketCashierSignUpFormModel signUpModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = await _userManagerService.CreateTicketCashierAsync(signUpModel);
-
-            if (user != null)
-            {
-                return Ok("Sign up successful");
-            }
-
-            return BadRequest("Sign up failed");
-        }
-
-        [HttpPost("signup/doctor")]
-        public async Task<IActionResult> SignUpDoctor([FromBody] DoctorSignUpFormModel signUpModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = await _userManagerService.CreateDoctorUserAsync(signUpModel);
-
-            if (user != null)
-            {
-                return Ok("Sign up successful");
-            }
-
-            return BadRequest("Sign up failed");
-        }
-
-        // New API to get all users
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var users = await _userManagerService.GetAllUsersAsync();
-            var usersWithRoles = new List<object>();
-
-            foreach (var user in users)
-            {
-                var roles = await _userManagerService.GetRolesAsync(user);
-
-                var userWithRoles = new
+                roleList.Add(new
                 {
-                    user.Id,
-                    user.UserName,
-                    user.Email,
-                    Roles = roles
-                };
-
-                usersWithRoles.Add(userWithRoles);
+                    Name = role.ToString(),
+                    Value = (int)role
+                });
             }
 
-            return Ok(usersWithRoles);
+            return Ok(roleList);
         }
 
-        // New API to delete user by ID
-        [HttpDelete("{id}")]
+        [HttpGet("GetUsersByRole/{role}")]
+        public async Task<IActionResult> GetUsersByRole(UserRole role)
+        {
+            // Convert UserRole enum to string
+            var roleName = role.ToString();
+            var users = await _userManagerService.GetUsersByRoleAsync(roleName);
+            return Ok(users);
+        }
+        /* // New API to get all users
+         [HttpGet("all")]
+         public async Task<IActionResult> GetAllUsers()
+         {
+             var users = await _userManagerService.GetAllUsersAsync();
+             var usersWithRoles = new List<object>();
+
+             foreach (var user in users)
+             {
+                 var roles = await _userManagerService.GetRolesAsync(user);
+
+                 var userWithRoles = new
+                 {
+                     user.Id,
+                     user.UserName,
+                     user.Email,
+                     Roles = roles
+                 };
+
+                 usersWithRoles.Add(userWithRoles);
+             }
+
+             return Ok(usersWithRoles);
+         }*/
+        [Authorize]
+        [HttpPut("UpdateUser/{id}")]
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserFormModel model)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            try
+            {
+                var result = await _userManagerService.UpdateUserAsync(id, model, userId);
+                if (result)
+                {
+                    return Ok("User updated successfully");
+                }
+                return NotFound("User not found");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
+        [Authorize]
+        [HttpDelete("DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            var result = await _userManagerService.DeleteUserByIdAsync(id);
-            if (result)
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            try
             {
-                return NoContent();
+                var result = await _userManagerService.DeleteUserByIdAsync(id, userId);
+                if (result)
+                {
+                    return NoContent();
+                }
+                return NotFound("User not found");
             }
-            return NotFound("User not found");
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
         }
+
     }
 }

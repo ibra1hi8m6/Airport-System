@@ -12,4 +12,13 @@
 
         public int seats_Business { get; set; }
     }
+    public class PlaneResponseModel
+    {
+        public Guid PlaneId { get; set; }
+        public string PlaneModel { get; set; }
+        public int PlanePayload { get; set; }
+        public int SeatsEconomy { get; set; }
+        public int SeatsBusiness { get; set; }
+        public string Message { get; set; }
+    }
 }

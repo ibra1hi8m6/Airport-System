@@ -8,11 +8,14 @@ namespace AirportSystem.Services.IServices
 {
     public interface IPlaneService
     {
-        Task<(Plane plane, string message)> CreatePlaneAsync(PlaneServiceFormModel planeForm);
+        Task<(Plane plane, string message)> CreatePlaneAsync(PlaneServiceFormModel planeForm, string userRole);
         Task<Plane> GetPlaneByIdAsync(Guid id);
         Task<IEnumerable<Plane>> GetAllPlanesAsync();
-        Task<Plane> UpdatePlaneAsync(Guid id, PlaneServiceFormModel planeForm);
-        Task<Plane> UpdatePlaneWithEvenPayloadAsync(Guid id, PlaneServiceFormModel planeForm);
-        Task<bool> DeletePlaneAsync(Guid id);
+        Task<Plane> UpdatePlaneAsync(Guid id, PlaneServiceFormModel planeForm, string userRole);
+        Task<Plane> UpdatePlaneWithEvenPayloadAsync(Guid id, PlaneServiceFormModel planeForm, string userRole);
+        Task<bool> DeletePlaneAsync(Guid id, string userRole);
+        
+        Task<IEnumerable<Plane>> GetPlanesByPayloadAsync(int payload);
+        Task<IEnumerable<Plane>> GetPlanesBySeatsAsync(int seats);
     }
 }

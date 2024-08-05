@@ -19,8 +19,12 @@ namespace AirportSystem.Services
             _context = context;
         }
 
-        public async Task<(Plane plane, string message)> CreatePlaneAsync(PlaneServiceFormModel planeForm)
+        public async Task<(Plane plane, string message)> CreatePlaneAsync(PlaneServiceFormModel planeForm, string userRole)
         {
+            if (userRole != "Admin")
+            {
+                throw new UnauthorizedAccessException("Only admins can create planes.");
+            }
             // Define the maximum payloads for each seat type
             const int maxEconomyPayload = 30;
             const int maxBusinessPayload = 45;
@@ -31,7 +35,7 @@ namespace AirportSystem.Services
             int totalPayload = economyPayload + businessPayload;
 
             // Ensure the plane's payload is valid
-            if (totalPayload > planeForm.Plane_Payload)
+            if (totalPayload >= planeForm.Plane_Payload)
             {
                 throw new AirportSystemException($"Total payload of seats ({totalPayload}) exceeds the plane's payload ({planeForm.Plane_Payload}).");
             }
@@ -71,8 +75,12 @@ namespace AirportSystem.Services
             return await _context.Planes.ToListAsync();
         }
 
-        public async Task<Plane> UpdatePlaneAsync(Guid id, PlaneServiceFormModel planeForm)
+        public async Task<Plane> UpdatePlaneAsync(Guid id, PlaneServiceFormModel planeForm, string userRole)
         {
+            if (userRole != "Admin")
+            {
+                throw new UnauthorizedAccessException("Only admins can update planes.");
+            }
             var plane = await _context.Planes.FindAsync(id);
             if (plane == null)
             {
@@ -104,8 +112,13 @@ namespace AirportSystem.Services
             return plane;
         }
 
-        public async Task<Plane> UpdatePlaneWithEvenPayloadAsync(Guid id, PlaneServiceFormModel planeForm)
+        public async Task<Plane> UpdatePlaneWithEvenPayloadAsync(Guid id, PlaneServiceFormModel planeForm, string userRole)
         {
+            if (userRole != "Admin")
+            {
+                throw new UnauthorizedAccessException("Only admins can update planes.");
+            }
+
             var plane = await _context.Planes.FindAsync(id);
             if (plane == null)
             {
@@ -135,8 +148,12 @@ namespace AirportSystem.Services
             return plane;
         }
 
-        public async Task<bool> DeletePlaneAsync(Guid id)
+        public async Task<bool> DeletePlaneAsync(Guid id, string userRole)
         {
+            if (userRole != "Admin")
+            {
+                throw new UnauthorizedAccessException("Only admins can delete planes.");
+            }
             var plane = await _context.Planes.FindAsync(id);
             if (plane == null)
             {
@@ -146,6 +163,22 @@ namespace AirportSystem.Services
             _context.Planes.Remove(plane);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+       
+
+        public async Task<IEnumerable<Plane>> GetPlanesByPayloadAsync(int payload)
+        {
+            return await _context.Planes
+                .Where(plane => plane.Plane_Payload == payload)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Plane>> GetPlanesBySeatsAsync(int seats)
+        {
+            return await _context.Planes
+                .Where(plane => plane.seats_Economy + plane.seats_Business == seats)
+                .ToListAsync();
         }
     }
 }

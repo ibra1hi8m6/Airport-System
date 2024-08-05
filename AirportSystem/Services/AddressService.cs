@@ -62,6 +62,10 @@ namespace AirportSystem.Services
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<IEnumerable<Address>> GetAllAddressesAsync()
+        {
+            return await _context.Addresses.ToListAsync();
+        }
     }
 }
 

@@ -18,7 +18,7 @@ namespace AirportSystem.Controllers
             _addressService = addressService;
         }
 
-        [HttpPost]
+        [HttpPost("CreateAddress")]
         public async Task<IActionResult> CreateAddress([FromBody] AddressServiceFormModel addressForm)
         {
             if (!ModelState.IsValid)
@@ -30,7 +30,7 @@ namespace AirportSystem.Controllers
             return Ok(createdAddress);
         }
 
-        [HttpGet("{id}", Name = "GetAddress")]
+        [HttpGet("GetAddress/{id}", Name = "GetAddress")]
         public async Task<IActionResult> GetAddress(Guid id)
         {
             var address = await _addressService.GetAddressByIdAsync(id);
@@ -41,7 +41,7 @@ namespace AirportSystem.Controllers
             return Ok(address);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateAddress/{id}")]
         public async Task<IActionResult> UpdateAddress(Guid id, [FromBody] AddressServiceFormModel addressForm)
         {
             if (!ModelState.IsValid)
@@ -60,7 +60,7 @@ namespace AirportSystem.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteAddress/{id}")]
         public async Task<IActionResult> DeleteAddress(Guid id)
         {
             var existingAddress = await _addressService.GetAddressByIdAsync(id);
@@ -71,6 +71,13 @@ namespace AirportSystem.Controllers
 
             await _addressService.DeleteAddressAsync(id);
             return NoContent();
+        }
+
+        [HttpGet("GetAllAddresses")]
+        public async Task<IActionResult> GetAllAddresses()
+        {
+            var addresses = await _addressService.GetAllAddressesAsync();
+            return Ok(addresses);
         }
     }
 }

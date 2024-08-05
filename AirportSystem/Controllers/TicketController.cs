@@ -8,65 +8,57 @@ using AirportSystem.Entity;
 using Microsoft.EntityFrameworkCore;
 using AirportSystem.Data;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
+using AirportSystem.Forms.Validate;
+using AirportSystem.Services;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 namespace AirportSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Tickets")]
     [ApiController]
     public class TicketController : ControllerBase
     {
         private readonly ITicketService _ticketService;
         private readonly ApplicationDbContext _context;
+        private readonly ValidateForm _validateForm;
 
-        public TicketController(ITicketService ticketService, ApplicationDbContext context)
+        public TicketController(UserManager<ApplicationUser> userManager,
+            ITicketService ticketService,
+            IFlightService flightService,
+            ApplicationDbContext context)
         {
             _ticketService = ticketService;
             _context = context;
+            _validateForm = new ValidateForm(userManager, context, flightService);
         }
-        [Authorize(Roles = "TicketCashier")]
-        [HttpPost("create")]
+        [Authorize(Roles = "TicketCashier,Admin")]
+        [HttpPost("CreateTicket")]
         public async Task<IActionResult> CreateTicket([FromBody] TicketFormModel ticketModel)
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             try
             {
-                var ticket = await _ticketService.CreateTicketAsync(ticketModel);
-
-                // Fetch additional details
-                var flight = await _context.Flights.Include(f => f.Plane).FirstOrDefaultAsync(f => f.Id == ticket.FlightId);
-                var passenger = await _context.Users.OfType<PassengerUser>().FirstOrDefaultAsync(p => p.Id == ticket.PassengerId);
-
-                var ticketResponse = new TicketResponseModel
-                {
-                    TicketId = ticket.Id,
-                    TicketClass = ticket.TicketClass,
-                    PassengerPayload = ticket.passenger_payload,
-                    SeatNumber = ticket.seatNumber,
-                    GateId = ticket.GateId,
-                    PassengerId = ticket.PassengerId,
-                    PassengerName = passenger?.UserName,
-                    TicketCashierId = ticket.TicketCashierId,
-                    FlightId = ticket.FlightId,
-                    FlightDetails = $"Flight from {flight?.Takeoff_Location} to {flight?.Destination} at {flight?.DepartureTime}",
-                    PlaneId = flight?.Plane.Id ?? Guid.Empty
-                };
-
+                var ticketResponse = await _ticketService.CreateTicketWithDetailsAsync(ticketModel, userId);
                 return Ok(ticketResponse);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
             }
             catch (AirportSystemException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
-            }
+           
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetTicketById/{id}")]
         public async Task<IActionResult> GetTicketById(Guid id)
         {
             var ticket = await _ticketService.GetTicketByIdAsync(id);
@@ -83,8 +75,7 @@ namespace AirportSystem.Controllers
             var tickets = await _ticketService.GetAllTicketsAsync();
             return Ok(tickets);
         }
-
-        [HttpPut("{id}")]
+        [HttpPut("UpdateTicket/{id}")]
         public async Task<IActionResult> UpdateTicket(Guid id, [FromBody] TicketUpdateFormModel ticketModel)
         {
             if (!ModelState.IsValid)
@@ -94,6 +85,8 @@ namespace AirportSystem.Controllers
 
             try
             {
+        
+
                 var updatedTicket = await _ticketService.UpdateTicketAsync(id, ticketModel);
                 return Ok(updatedTicket);
             }
@@ -101,13 +94,10 @@ namespace AirportSystem.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-            catch (Exception ex)
-            {
-                return NotFound(ex.Message);
-            }
+          
         }
 
-        [HttpPost("register-extra-payload")]
+        /*[HttpPost("RegisterExtraPayload")]
         public async Task<IActionResult> RegisterExtraPayload([FromBody] TicketFormModel ticketModel)
         {
             try
@@ -123,9 +113,9 @@ namespace AirportSystem.Controllers
             {
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
-        }
+        }*/
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteTicket/{id}")]
         public async Task<IActionResult> DeleteTicket(Guid id)
         {
             try
@@ -136,6 +126,44 @@ namespace AirportSystem.Controllers
             catch (Exception ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("GetEconomySeats")]
+        public async Task<IActionResult> GetEconomySeats()
+        {
+            var tickets = await _ticketService.GetTicketsByClassAsync("Economy");
+            return Ok(tickets);
+        }
+
+        [HttpGet("GetBusinessSeats")]
+        public async Task<IActionResult> GetBusinessSeats()
+        {
+            var tickets = await _ticketService.GetTicketsByClassAsync("Business");
+            return Ok(tickets);
+        }
+
+        [HttpGet("GetTicketsByFlight/{flightId}")]
+        public async Task<IActionResult> GetTicketsByFlight(Guid flightId)
+        {
+            var tickets = await _ticketService.GetTicketsByFlightIdAsync(flightId);
+            return Ok(tickets);
+        }
+
+
+
+        [HttpGet("GetTicketsByDuration")]
+        public async Task<IActionResult> GetTicketsByDuration([FromQuery] int hours)
+        {
+            try
+            {
+                var duration = TimeSpan.FromHours(hours);
+                var tickets = await _ticketService.GetTicketsByDurationAsync(duration);
+                return Ok(tickets);
+            }
+            catch (AirportSystemException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
     }
