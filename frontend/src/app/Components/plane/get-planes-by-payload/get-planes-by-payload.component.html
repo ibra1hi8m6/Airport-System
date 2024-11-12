@@ -1,0 +1,31 @@
+<div>
+  <h2>Get Planes by Payload</h2>
+
+  <!-- Form to input payload value -->
+  <form (ngSubmit)="getPlanesByPayload()">
+    <label for="payload">Enter Payload:</label>
+    <input
+      id="payload"
+      type="number"
+      [(ngModel)]="payload"
+      name="payload"
+      required
+    />
+    <button type="submit">Get Planes</button>
+  </form>
+
+  <!-- Display error message if any -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Display planes if available -->
+  <div *ngIf="planes.length > 0">
+    <h3>Planes List:</h3>
+    <ul>
+      <li *ngFor="let plane of planes">
+        {{ plane.plane_model }} (Payload: {{ plane.plane_Payload }})
+      </li>
+    </ul>
+  </div>
+</div>

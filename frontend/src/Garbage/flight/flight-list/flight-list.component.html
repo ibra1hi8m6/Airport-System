@@ -1,0 +1,26 @@
+<div class="form-group">
+  <label for="takeoffLocation">Select Takeoff Location:</label>
+  <select [(ngModel)]="selectedTakeoffLocation" class="form-control" id="takeoffLocation">
+    <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="destination">Select Destination:</label>
+  <select [(ngModel)]="selectedDestination" class="form-control" id="destination">
+    <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+  </select>
+</div>
+
+<button class="btn btn-primary" (click)="getFlights()">Get Flights</button>
+
+<div *ngIf="flights.length > 0; else noFlights">
+  <ul>
+    <li *ngFor="let flight of flights">
+      {{ flight.takeoff_Location }} to {{ flight.destination }} ({{ flight.departureTime | date }} - {{ flight.arrivalTime | date }})
+    </li>
+  </ul>
+</div>
+<ng-template #noFlights>
+  <p>No flights available.</p>
+</ng-template>

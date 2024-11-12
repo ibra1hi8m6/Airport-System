@@ -1,0 +1,16 @@
+<!-- get-flights-by-pilot-id.component.html -->
+<h2>Get Flights by Pilot</h2>
+<form (ngSubmit)="onGetFlight()">
+  <div class="form-group">
+    <label for="pilotSelect">Select Pilot:</label>
+    <select id="pilotSelect" [(ngModel)]="selectedPilotId" name="selectedPilotId" class="form-control">
+      <option value="" disabled>Select a pilot</option>
+      <option *ngFor="let pilot of pilots" [value]="pilot.id">
+        {{ pilot.firstName }} {{ pilot.lastName }}
+      </option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Get Flights</button>
+</form>
+<p>{{ message }}</p>
+<p>{{ flightDetails | json }}</p>

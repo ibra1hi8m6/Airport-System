@@ -1,0 +1,82 @@
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+      <div class="position-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/">Home</a>
+          </li>
+          <!-- Flight dropdown with sub-routes -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="flightDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Flight
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="flightDropdown">
+              <li><a class="dropdown-item" routerLink="/flight/create">Create Flight</a></li>
+              <li><a class="dropdown-item" routerLink="/flight/update/:id">Update Flight</a></li>
+              <li><a class="dropdown-item" routerLink="/flight/delete/:id">Delete Flight</a></li>
+              <li><a class="dropdown-item" routerLink="/flight/doctors">Flights with Doctors</a></li>
+              <li><a class="dropdown-item" routerLink="/flight/duration/greater-than">Flights > 5 Hours</a></li>
+              <li><a class="dropdown-item" routerLink="/flight/duration/less-than">Flights < 5 Hours</a></li>
+              <li><a class="dropdown-item" routerLink="/flight/pilot/:pilotId">Flights by Pilot</a></li>
+              <li><a class="dropdown-item" routerLink="/flight/locations">Flights by Location</a></li>
+            </ul>
+          </li>
+          <!-- Gate dropdown with sub-routes -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="gateDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Gate
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="gateDropdown">
+              <li><a class="dropdown-item" routerLink="/gate/create">Create Gate</a></li>
+
+              <li><a class="dropdown-item" routerLink="/gate/all">All Gates</a></li>
+              <li><a class="dropdown-item" routerLink="/gate/update/:id">Update Gate</a></li>
+              <li><a class="dropdown-item" routerLink="/gate/delete/:id">Delete Gate</a></li>
+            </ul>
+          </li>
+          <!-- Plane dropdown with sub-routes -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="planeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Plane
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="planeDropdown">
+              <li><a class="dropdown-item" routerLink="/plane/create">Create Plane</a></li>
+
+              <li><a class="dropdown-item" routerLink="/plane/all">All Planes</a></li>
+              <li><a class="dropdown-item" routerLink="/plane/update/:id">Update Plane</a></li>
+              <li><a class="dropdown-item" routerLink="/plane/update-payload/:id">Update Plane Payload</a></li>
+              <li><a class="dropdown-item" routerLink="/plane/delete/:id">Delete Plane</a></li>
+              <li><a class="dropdown-item" routerLink="/plane/payload">Planes by Payload</a></li>
+              <li><a class="dropdown-item" routerLink="/plane/seats">Planes by Seats</a></li>
+            </ul>
+          </li>
+
+          <!-- Ticket dropdown with sub-routes -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="ticketDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Ticket
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="ticketDropdown">
+              <li><a class="dropdown-item" routerLink="/ticket/create">Create Ticket</a></li>
+
+              <li><a class="dropdown-item" routerLink="/ticket/update/:id">Update Ticket</a></li>
+              <li><a class="dropdown-item" routerLink="/ticket/delete/:id">Delete Ticket</a></li>
+              <li><a class="dropdown-item" routerLink="/ticket/economy-seats">Economy Seats</a></li>
+              <li><a class="dropdown-item" routerLink="/ticket/business-seats">Business Seats</a></li>
+              <li><a class="dropdown-item" routerLink="/ticket/flight/:flightId">Tickets by Flight</a></li>
+              <li><a class="dropdown-item" routerLink="/ticket/duration">Tickets by Duration</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              User Management
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" routerLink="/user/update/:id">Update User</a></li>
+              <li><a class="dropdown-item" routerLink="/user/delete/:id">Delete User</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>

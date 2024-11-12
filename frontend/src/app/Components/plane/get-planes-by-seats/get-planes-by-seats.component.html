@@ -1,0 +1,31 @@
+<div>
+  <h2>Get Planes by Number of Seats</h2>
+
+  <!-- Form to input number of seats -->
+  <form (ngSubmit)="getPlanesBySeats()">
+    <label for="seats">Enter Number of Seats:</label>
+    <input
+      id="seats"
+      type="number"
+      [(ngModel)]="seats"
+      name="seats"
+      required
+    />
+    <button type="submit">Get Planes</button>
+  </form>
+
+  <!-- Display error message if any -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Display planes if available -->
+  <div *ngIf="planes.length > 0">
+    <h3>Planes List:</h3>
+    <ul>
+      <li *ngFor="let plane of planes">
+        {{ plane.plane_model }} (Seats: {{ plane.seats_Economy + plane.seats_Business }})
+      </li>
+    </ul>
+  </div>
+</div>

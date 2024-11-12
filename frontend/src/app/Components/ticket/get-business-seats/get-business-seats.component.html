@@ -1,0 +1,22 @@
+<div>
+  <h2>Business Seats</h2>
+
+  <!-- Display an error message if the request fails -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Display the list of business seats -->
+  <ul *ngIf="businessSeats.length > 0; else noSeats">
+    <li *ngFor="let seat of businessSeats">
+      Seat Number: {{ seat.seatNumber }} -
+      Passenger: {{ getPassengerName(seat.passengerUserId) }} -
+      Status: {{ seat.status }}
+    </li>
+  </ul>
+
+  <!-- Display a message if no seats are available -->
+  <ng-template #noSeats>
+    <p>No business seats available at the moment.</p>
+  </ng-template>
+</div>

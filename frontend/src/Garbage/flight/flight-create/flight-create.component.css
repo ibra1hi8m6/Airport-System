@@ -1,0 +1,10 @@
+.custom-dropdown {
+  width: 200px;
+  height: 40px;
+  padding: 5px;
+  font-size: 16px;
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}

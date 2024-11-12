@@ -1,0 +1,9 @@
+<p>delete-gate works!</p>
+<form (ngSubmit)="deleteGate()">
+  <label for="id">Gate ID:</label>
+  <select id="id" [(ngModel)]="gateId" name="id" required>
+    <option *ngFor="let gateOption of gates" [value]="gateOption.id">{{ gateOption.name }}</option>
+  </select>
+  <button type="submit">Delete Gate</button>
+</form>
+

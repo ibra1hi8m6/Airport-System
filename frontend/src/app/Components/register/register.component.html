@@ -1,0 +1,28 @@
+<div class="container">
+  <h2>Register</h2>
+  <form (ngSubmit)="register(registerDto)">
+    <!-- Your registration form fields here -->
+
+    <div>Username: <input [(ngModel)]="registerDto.Username" /></div>
+    <div>Email: <input [(ngModel)]="registerDto.Email" /></div>
+    <div>First Name: <input [(ngModel)]="registerDto.FirstName" /></div>
+    <div>Last Name: <input [(ngModel)]="registerDto.LastName" /></div>
+    <div>Password: <input [(ngModel)]="registerDto.Password" /></div>
+    <div>Confirm Password: <input [(ngModel)]="registerDto.ConfirmPassword" /></div>
+    <div>Role:
+      <select [(ngModel)]="registerDto.Role" name="role">
+        <option value="" disabled selected>Select a role</option>
+        <option *ngFor="let role of roles" [value]="role.value">{{ role.name }}</option>
+      </select>
+    </div>
+    <div>Phone Number: <input [(ngModel)]="registerDto.PhoneNumber" /></div>
+    <div>Date Of Birth: <input [(ngModel)]="registerDto.DateOfBirth" type="date" /></div>
+    <div>Total Hours: <input [(ngModel)]="registerDto.TotalHours" /></div>
+    <div>Doctor Code: <input [(ngModel)]="registerDto.DoctorCode" /></div>
+    <div>House Number: <input [(ngModel)]="registerDto.HouseNumber" /></div>
+    <div>Street: <input [(ngModel)]="registerDto.Street" /></div>
+    <div>City: <input [(ngModel)]="registerDto.City" /></div>
+    <div>Country: <input [(ngModel)]="registerDto.Country" /></div>
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+</div>

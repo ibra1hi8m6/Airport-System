@@ -1,0 +1,19 @@
+<div>
+  <h2>Tickets by Duration</h2>
+
+  <label for="duration">Enter Duration (in hours):</label>
+  <input type="number" id="duration" [(ngModel)]="duration" />
+  <button (click)="getTickets()">Get Tickets</button>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <ul *ngIf="tickets.length > 0">
+    <li *ngFor="let ticket of tickets">
+      Ticket ID: {{ ticket.id }} - Passenger: {{ ticket.passengerName }} - Duration: {{ ticket.duration }} hours
+    </li>
+  </ul>
+
+  <p *ngIf="tickets.length === 0 && !errorMessage">No tickets found for the specified duration.</p>
+</div>

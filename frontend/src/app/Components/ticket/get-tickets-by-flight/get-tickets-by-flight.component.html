@@ -1,0 +1,23 @@
+<div>
+  <h2>Tickets by Flight</h2>
+
+  <label for="flight">Select Flight:</label>
+  <select id="flight" [(ngModel)]="selectedFlightId">
+    <option *ngFor="let flight of flights" [value]="flight.id">
+      {{ flight.takeoff_Location }} - {{ flight.destination }}
+    </option>
+  </select>
+  <button (click)="getTickets()">Get Tickets</button>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <ul *ngIf="tickets.length > 0">
+    <li *ngFor="let ticket of tickets">
+      Ticket ID: {{ ticket.id }} - Passenger: {{ ticket.passengerName }} - Seat: {{ ticket.seatNumber }}
+    </li>
+  </ul>
+
+  <p *ngIf="tickets.length === 0 && !errorMessage">No tickets found for the selected flight.</p>
+</div>

@@ -1,0 +1,8 @@
+/* Add your styles here */
+.list-group-item {
+  border: 1px solid #ddd;
+  margin-bottom: 5px;
+}
+.message {
+  color: red;
+}

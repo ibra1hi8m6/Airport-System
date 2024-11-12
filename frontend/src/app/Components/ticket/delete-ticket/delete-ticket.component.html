@@ -1,0 +1,14 @@
+<p>Delete Ticket works!</p>
+
+<form (ngSubmit)="deleteTicket()">
+  <label for="ticket">Select Ticket to Delete:</label>
+  <select [(ngModel)]="selectedTicketId" name="ticket" required>
+    <option *ngFor="let ticket of tickets" [value]="ticket.id">
+      {{ ticket.id }} - {{ ticket.PassengerPayload }} (Passenger Payload)
+    </option>
+  </select>
+
+  <button type="submit">Delete Ticket</button>
+</form>
+
+<p *ngIf="message">{{ message }}</p>

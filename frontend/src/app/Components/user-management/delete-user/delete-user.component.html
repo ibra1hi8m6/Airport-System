@@ -1,0 +1,17 @@
+<div>
+  <h3>Delete User</h3>
+
+  <label for="role">Select Role</label>
+  <select id="role" (change)="onRoleChange($event)">
+    <option *ngFor="let role of roles" [value]="role.value">{{ role.name }}</option>
+  </select>
+
+  <div *ngIf="users.length > 0">
+    <label for="user">Select User</label>
+    <select id="user" (change)="onUserSelect($event)">
+      <option *ngFor="let user of users" [value]="user.id">{{ user.userName }}</option>
+    </select>
+  </div>
+
+  <button (click)="deleteUser()" [disabled]="!selectedUserId">Delete User</button>
+</div>

@@ -1,0 +1,15 @@
+<div *ngIf="economySeats.length > 0; else noSeats">
+  <h3>Economy Seats</h3>
+  <ul>
+    <li *ngFor="let seat of economySeats">
+      Seat Number: {{ seat.seatNumber }} -
+      Passenger: {{ getPassengerName(seat.passengerUserId) }}
+    </li>
+  </ul>
+</div>
+
+<ng-template #noSeats>
+  <p>No economy seats available.</p>
+</ng-template>
+
+<p *ngIf="errorMessage">{{ errorMessage }}</p>

@@ -1,0 +1,12 @@
+<p>update-gate works!</p>
+<form (ngSubmit)="updateGate()">
+  <label for="id">Gate ID:</label>
+  <select id="id" [(ngModel)]="gate.id" name="id" required>
+    <option *ngFor="let gateOption of gates" [value]="gateOption.id">{{ gateOption.name }}</option>
+  </select>
+
+  <label for="name">New Gate Name:</label>
+  <input id="name" [(ngModel)]="gate.name" name="name" required />
+
+  <button type="submit">Update Gate</button>
+</form>

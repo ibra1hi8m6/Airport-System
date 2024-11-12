@@ -1,0 +1,11 @@
+<div class="container">
+ 
+    <!-- Your login form fields here -->
+    <h2>Login</h2>
+    <form (ngSubmit)="login(loginDto)">
+      <div>Username: <input [(ngModel)]="loginDto.Username" name="username" required /></div>
+      <div>Password: <input [(ngModel)]="loginDto.Password" name="password" type="password" required /></div>
+      <div>Remember Me: <input [(ngModel)]="loginDto.RememberMe" name="rememberMe" type="checkbox" /></div>
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+</div>

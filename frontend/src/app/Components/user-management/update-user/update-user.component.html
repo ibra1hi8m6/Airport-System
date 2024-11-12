@@ -1,0 +1,31 @@
+<div>
+  <h3>Update User</h3>
+
+  <label for="role">Select Role</label>
+  <select id="role" (change)="onRoleChange($event)">
+    <option value="" disabled selected>Select a role</option>
+    <option *ngFor="let role of roles" [value]="role.value">{{ role.name }}</option>
+  </select>
+
+  <div *ngIf="users.length > 0">
+    <label for="user">Select User</label>
+    <select id="user" (change)="onUserSelect($event)">
+      <option value="" disabled selected>Select a user</option>
+      <option *ngFor="let user of users" [value]="user.id">{{ user.userName }}</option>
+    </select>
+  </div>
+
+  <form [formGroup]="updateForm!" (ngSubmit)="updateUser()">
+    <div *ngIf="selectedUserId">
+      <input formControlName="username" placeholder="{{ selectedUser?.userName  || 'No username available' }}" />
+      <input formControlName="firstName" placeholder="{{ selectedUser?.firstName  || 'No first name available' }}" />
+      <input formControlName="lastName" placeholder="{{ selectedUser?.lastName  || 'No last name available' }}" />
+      <input formControlName="email" placeholder="{{ selectedUser?.email  || 'No email available' }}" />
+      <input formControlName="phoneNumber" placeholder="{{ selectedUser?.phoneNumber  || 'No phone number available' }}" />
+      <input formControlName="dateOfBirth" placeholder="{{ selectedUser?.dateOfBirth  || 'No date of birth available' }}" type="date" />
+      <!-- Add more fields as needed -->
+
+      <button type="submit" [disabled]="updateForm!.invalid">Update User</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,7 @@
+<p>get-all-gates works!</p>
+<button (click)="getGates()">Load Gates</button>
+
+<ul *ngIf="gates && gates.length > 0">
+  <li *ngFor="let gate of gates">{{ gate.name }}</li>
+</ul>
+<p *ngIf="!gates || gates.length === 0">No gates available.</p>

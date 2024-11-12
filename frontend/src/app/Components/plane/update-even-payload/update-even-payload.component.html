@@ -1,0 +1,40 @@
+<div>
+  <h2>Update Plane Payload</h2>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="planeSelect">Select Plane:</label>
+      <select class="form-select" [(ngModel)]="selectedPlaneId" (change)="onPlaneSelect($event)" name="planeSelect" required>
+        <option *ngFor="let plane of planes" [value]="plane.id">{{ plane.plane_model }}</option>
+      </select>
+    </div>
+
+    <div *ngIf="selectedPlaneId">
+      <div class="mb-3">
+        <label>Plane Model:</label>
+        <span class="d-block">{{ planeModel }}</span>
+      </div>
+
+      <div class="mb-3">
+        <label>Seats Economy:</label>
+        <span class="d-block">{{ seatsEconomy }}</span>
+      </div>
+
+      <div class="mb-3">
+        <label>Seats Business:</label>
+        <span class="d-block">{{ seatsBusiness }}</span>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="planePayload">New Plane Payload:</label>
+      <input id="planePayload" type="number" [(ngModel)]="planePayload" name="planePayload" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Plane</button>
+  </form>
+
+  <div *ngIf="message" class="message mt-3">
+    {{ message }}
+  </div>
+</div>

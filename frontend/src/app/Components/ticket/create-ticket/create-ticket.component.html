@@ -1,0 +1,35 @@
+<p>Create Ticket works!</p>
+<form (ngSubmit)="createTicket()">
+  <label for="ticketClass">Ticket Class:</label>
+  <select [(ngModel)]="ticketModel.ticketClass" name="ticketClass" required>
+    <option [value]="1">Business</option>
+    <option [value]="2">Economy</option>
+  </select>
+
+  <label for="passenger_payload">Passenger Payload:</label>
+  <input type="number" [(ngModel)]="ticketModel.PassengerPayload" name="passenger_payload" placeholder="Passenger Payload" required />
+
+  <label for="seatNumber">Seat Number:</label>
+  <input type="text" [(ngModel)]="ticketModel.seatNumber" name="seatNumber" placeholder="Seat Number" required />
+
+  <label for="gateId">Gate ID:</label>
+  <select [(ngModel)]="ticketModel.gateId" name="gateId" required>
+    <option *ngFor="let gate of gates" [value]="gate.id">{{ gate.name }}</option>
+  </select>
+
+  <label for="passengerUserId">Passenger User ID:</label>
+  <select [(ngModel)]="ticketModel.passengerId" name="passengerUserId" required>
+    <option *ngFor="let pilot of pilots" [value]="pilot.id">{{ pilot.firstName }} {{ pilot.lastName }}</option>
+  </select>
+
+  <label for="ticketCashierId">Ticket Cashier ID:</label>
+  <select [(ngModel)]="ticketModel.ticketCashierId" name="ticketCashierId" required>
+    <option *ngFor="let pilot of pilots" [value]="pilot.id">{{ pilot.firstName }} {{ pilot.lastName }}</option>
+  </select>
+
+  <label for="flightId">Flight ID:</label>
+  <select [(ngModel)]="ticketModel.flightId" name="flightId" required>
+    <option *ngFor="let flight of flights" [value]="flight.id">{{ flight.takeoff_Location }} to {{ flight.destination }} ({{ flight.departureTime | date:'short' }} - {{ flight.arrivalTime | date:'short' }})</option>
+  </select>
+  <button type="submit">Create Ticket</button>
+</form>

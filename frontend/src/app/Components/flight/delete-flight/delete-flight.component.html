@@ -1,0 +1,14 @@
+<h2>Delete Flight</h2>
+<form (ngSubmit)="onDelete()">
+  <div class="form-group">
+    <label for="flightSelect">Select Flight:</label>
+    <select id="flightSelect" [(ngModel)]="selectedFlightId" name="selectedFlightId" class="form-control">
+      <option value="" disabled>Select a flight</option>
+      <option *ngFor="let flight of flights" [value]="flight.flightId">
+        {{ flight.Takeoff_Location }} to {{ flight.Destination }} ({{ flight.departureTime | date:'short' }} - {{ flight.arrivalTime | date:'short' }})
+      </option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-danger">Delete Flight</button>
+</form>
+<p>{{ message }}</p>

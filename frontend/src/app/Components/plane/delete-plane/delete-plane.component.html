@@ -1,0 +1,7 @@
+<div>
+  <h2>Delete Plane</h2>
+  <select [(ngModel)]="selectedPlaneId" (change)="onPlaneSelected($event)">
+    <option *ngFor="let plane of planes" [value]="plane.id">{{ plane.plane_model }}</option>
+  </select>
+  <button (click)="deletePlane()">Delete</button>
+</div>

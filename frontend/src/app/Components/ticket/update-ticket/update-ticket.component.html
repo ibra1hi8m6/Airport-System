@@ -1,0 +1,36 @@
+<div>
+  <h2>Update Ticket</h2>
+
+  <form (ngSubmit)="selectTicket()">
+    <label for="ticket">Select Ticket to Update:</label>
+    <select [(ngModel)]="selectedTicketId" name="ticket" required>
+      <option *ngFor="let ticket of tickets" [value]="ticket.id">
+        {{ ticket.id }} - {{ ticket.passengerUser?.firstName }} {{ ticket.passengerUser?.lastName }} (Passenger)
+      </option>
+    </select>
+
+    <button type="submit">Load Ticket</button>
+  </form>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <form *ngIf="ticket">
+    <label for="passengerName">Passenger Name:</label>
+    <input type="text" id="passengerName" [value]="ticket.passengerUser?.firstName + ' ' + ticket.passengerUser?.lastName" disabled />
+
+    <label for="seatNumber">Seat Number:</label>
+    <input type="text" id="seatNumber" [(ngModel)]="ticket.seatNumber" name="seatNumber" />
+
+    <label for="flightId">Flight:</label>
+    <select id="flightId" [(ngModel)]="ticket.flightId" name="flightId">
+      <option value="" disabled>Select a flight</option>
+      <option *ngFor="let flight of flights" [value]="flight.flightId">
+        {{ flight.Takeoff_Location }} to {{ flight.Destination }} ({{ flight.departureTime | date:'short' }} - {{ flight.arrivalTime | date:'short' }})
+      </option>
+    </select>
+
+    <button type="button" (click)="updateTicket()">Update Ticket</button>
+  </form>
+</div>

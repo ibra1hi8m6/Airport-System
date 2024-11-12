@@ -1,0 +1,67 @@
+<h2>Update Flight</h2>
+<form [formGroup]="flightForm" (ngSubmit)="onUpdateFlight()">
+  <!-- Flight ID Selection -->
+  <div class="form-group">
+    <label for="flightSelect">Select Flight:</label>
+    <select id="flightSelect" [(ngModel)]="selectedFlightId" name="selectedFlightId" class="form-control" (change)="onFlightSelect($event)">
+      <option value="" disabled selected>Select a flight</option>
+      <option *ngFor="let flight of flights" [value]="flight.flightId">
+        {{ flight.Takeoff_Location }} to {{ flight.Destination }} ({{ flight.departureTime | date:'short' }} - {{ flight.arrivalTime | date:'short' }})
+      </option>
+    </select>
+  </div>
+
+  <!-- Departure Time -->
+  <div class="form-group">
+    <label for="departureTime">Departure Time:</label>
+    <input type="datetime-local" id="departureTime" formControlName="departureTime" class="form-control" required>
+  </div>
+
+  <!-- Arrival Time -->
+  <div class="form-group">
+    <label for="arrivalTime">Arrival Time:</label>
+    <input type="datetime-local" id="arrivalTime" formControlName="arrivalTime" class="form-control" required>
+  </div>
+
+
+
+  <!-- Takeoff Location -->
+  <div class="form-group">
+    <label for="takeoffLocation">Takeoff Location:</label>
+    <select formControlName="Takeoff_Location" class="form-control" id="takeoffLocation" required>
+      <option value="" disabled selected>Select City</option>
+      <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+    </select>
+  </div>
+
+  <!-- Destination -->
+  <div class="form-group">
+    <label for="destination">Destination:</label>
+    <select formControlName="Destination" class="form-control" id="destination" required>
+      <option value="" disabled selected>Select City</option>
+      <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+    </select>
+  </div>
+
+  <!-- Pilot Selection -->
+  <div class="form-group">
+    <label for="pilot">Pilot:</label>
+    <select formControlName="pilotId" class="form-control" required>
+      <option value="" disabled selected>Select Pilot</option>
+      <option *ngFor="let pilot of pilots" [value]="pilot.id">{{ pilot.firstName }}</option>
+    </select>
+  </div>
+
+  <!-- Doctor Selection -->
+  <div class="form-group">
+    <label for="doctor">Doctor:</label>
+    <select formControlName="doctorId" class="form-control">
+      <option value="" disabled selected>Select Doctor</option>
+      <option *ngFor="let doctor of doctors" [value]="doctor.id">{{ doctor.firstName }}</option>
+    </select>
+  </div>
+
+  <!-- Submit Button -->
+  <button type="submit" class="btn btn-primary">Update Flight</button>
+</form>
+<p>{{ message }}</p>

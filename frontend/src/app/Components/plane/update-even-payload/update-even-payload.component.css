@@ -1,0 +1,15 @@
+/* src/app/components/update-even-payload/update-even-payload.component.css */
+
+.message {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+select, input {
+  display: block;
+  margin-bottom: 10px;
+}

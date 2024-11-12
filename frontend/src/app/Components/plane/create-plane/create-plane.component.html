@@ -1,0 +1,20 @@
+<form (ngSubmit)="onSubmit()" #planeForm="ngForm">
+  <div>
+    <label for="model">Plane Model:</label>
+    <input id="model" name="Plane_model" [(ngModel)]="planeModel" required>
+  </div>
+  <div>
+    <label for="payload">Plane Payload:</label>
+    <input id="payload" name="Plane_Payload" [(ngModel)]="planePayload" required>
+  </div>
+  <div>
+    <label for="economySeats">Economy Seats:</label>
+    <input id="economySeats" name="seats_Economy" [(ngModel)]="seatsEconomy" required>
+  </div>
+  <div>
+    <label for="businessSeats">Business Seats:</label>
+    <input id="businessSeats" name="seats_Budiness" [(ngModel)]="seatsBusiness" required>
+  </div>
+  <button type="submit">Create Plane</button>
+</form>
+<p *ngIf="message">{{ message }}</p>

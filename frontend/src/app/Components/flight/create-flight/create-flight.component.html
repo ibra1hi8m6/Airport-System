@@ -1,0 +1,56 @@
+<form (ngSubmit)="onSubmit()">
+  <!-- Flight Details -->
+  <div>
+    <label for="departureTime">Departure Time:</label>
+    <input type="datetime-local" [(ngModel)]="flightModel.departureTime" name="departureTime" required>
+  </div>
+
+  <div>
+    <label for="arrivalTime">Arrival Time:</label>
+    <input type="datetime-local" [(ngModel)]="flightModel.arrivalTime" name="arrivalTime" required>
+  </div>
+
+  <div class="form-group">
+    <label for="takeoffLocation">Takeoff Location:</label>
+    <select [(ngModel)]="flightModel.Takeoff_Location" class="form-control" id="takeoffLocation" required>
+      <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="destination">Destination:</label>
+    <select [(ngModel)]="flightModel.Destination" class="form-control" id="destination" required>
+      <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+    </select>
+  </div>
+
+  <!-- Plane Selection -->
+  <div>
+    <label for="plane">Plane:</label>
+    <select [(ngModel)]="flightModel.planeId" name="planeId" required class="custom-dropdown">
+      <option value="" disabled selected>Select Plane</option>
+      <option *ngFor="let plane of planes" [value]="plane.id">{{ plane.plane_model }}</option>
+    </select>
+  </div>
+
+  <!-- Pilot Selection -->
+  <div>
+    <label for="pilot">Pilot:</label>
+    <select [(ngModel)]="flightModel.pilotId" name="pilotId" required class="custom-dropdown">
+      <option value="" disabled selected>Select Pilot</option>
+      <option *ngFor="let pilot of pilots" [value]="pilot.id">{{ pilot.firstName }}</option>
+    </select>
+  </div>
+
+  <!-- Doctor Selection -->
+  <div>
+    <label for="doctor">Doctor:</label>
+    <select [(ngModel)]="flightModel.doctorId" name="doctorId" required class="custom-dropdown">
+      <option value="" disabled selected>Select Doctor</option>
+      <option *ngFor="let doctor of doctors" [value]="doctor.id">{{ doctor.firstName }}</option>
+    </select>
+  </div>
+
+  <!-- Submit Button -->
+  <button type="submit">Create Flight</button>
+</form>

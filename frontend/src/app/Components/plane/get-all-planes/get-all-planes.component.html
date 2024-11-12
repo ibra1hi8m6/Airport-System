@@ -1,0 +1,25 @@
+<div>
+  <h2>Get All Planes</h2>
+
+  <button (click)="getPlanes()" class="btn btn-primary">Load Planes</button>
+
+  <div *ngIf="planes.length > 0; else noPlanes">
+    <h3>Plane List:</h3>
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let plane of planes">
+        <strong>Model:</strong> {{ plane.plane_model }} |
+        <strong>Payload:</strong> {{ plane.plane_Payload }} |
+        <strong>Seats Economy:</strong> {{ plane.seats_Economy }} |
+        <strong>Seats Business:</strong> {{ plane.seats_Business }}
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #noPlanes>
+    <p>No planes found. Click the button to load planes.</p>
+  </ng-template>
+
+  <div *ngIf="message" class="message mt-3">
+    {{ message }}
+  </div>
+</div>
